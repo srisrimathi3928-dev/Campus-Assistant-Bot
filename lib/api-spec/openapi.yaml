@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: student-support
+    description: Student support chatbot operations
 paths:
   /healthz:
     get:
@@ -24,6 +26,44 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /topics:
+    get:
+      operationId: getStudentTopics
+      tags: [student-support]
+      summary: List student support topics
+      responses:
+        "200":
+          description: Available support topics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StudentTopic"
+  /chat:
+    post:
+      operationId: askStudentAssistant
+      tags: [student-support]
+      summary: Ask the student assistant a question
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatQuestion"
+      responses:
+        "200":
+          description: Assistant answer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatAnswer"
+        "400":
+          description: Invalid question
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +73,50 @@ components:
           type: string
       required:
         - status
+    StudentTopic:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        description:
+          type: string
+        prompt:
+          type: string
+      required:
+        - id
+        - label
+        - description
+        - prompt
+    ChatQuestion:
+      type: object
+      properties:
+        question:
+          type: string
+          minLength: 1
+      required:
+        - question
+    ChatAnswer:
+      type: object
+      properties:
+        answer:
+          type: string
+        topic:
+          type: string
+        suggestedQuestions:
+          type: array
+          items:
+            type: string
+      required:
+        - answer
+        - topic
+        - suggestedQuestions
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
 

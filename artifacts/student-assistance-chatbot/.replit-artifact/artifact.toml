@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Student Assistance Chatbot"
+description = "A responsive AI-style student support chatbot for college questions about attendance, fees, exams, library services, faculty, placements, timetables, and HOD information, powered by a Flask backend."
+version = "1.0.0"
+id = "artifacts/student-assistance-chatbot"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 20575
+
+[services.development]
+run = "pnpm --filter @workspace/student-assistance-chatbot run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/student-assistance-chatbot", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/student-assistance-chatbot/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "20575"
+BASE_PATH = "/"
